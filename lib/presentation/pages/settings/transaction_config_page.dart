@@ -22,6 +22,7 @@ class _TransactionConfigPageState extends State<TransactionConfigPage> {
   late TextEditingController _discountController;
 
   bool _taxEnabled = true;
+  bool _serviceChargeEnabled = true;
   bool _isLoading = true;
   bool _isSaving = false;
   
@@ -53,6 +54,7 @@ class _TransactionConfigPageState extends State<TransactionConfigPage> {
         _serviceChargeController.text = (settings['service_charge_percentage'] as num?)?.toString() ?? '5.0';
         _discountController.text = (settings['max_cashier_discount'] as num?)?.toString() ?? '20.0';
         _taxEnabled = (settings['tax_enabled'] as int?) == 1;
+        _serviceChargeEnabled = (settings['service_charge_enabled'] as int? ?? 1) == 1;
         _qrisBase64 = settings['qris_image_path'] as String?;
       }
     } catch (_) {}
@@ -95,6 +97,7 @@ class _TransactionConfigPageState extends State<TransactionConfigPage> {
         'service_charge_percentage': double.tryParse(_serviceChargeController.text) ?? 0.0,
         'max_cashier_discount': double.tryParse(_discountController.text) ?? 0.0,
         'tax_enabled': _taxEnabled ? 1 : 0,
+        'service_charge_enabled': _serviceChargeEnabled ? 1 : 0,
         'qris_image_path': _qrisBase64,
       });
       if (mounted) {
@@ -148,10 +151,19 @@ class _TransactionConfigPageState extends State<TransactionConfigPage> {
                           return null;
                         },
                       ),
+                      const SizedBox(height: 24),
+                      SwitchListTile(
+                        title: Text('Aktifkan Service Charge', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+                        subtitle: const Text('Service charge akan dihitung dari total sebelum pajak.'),
+                        value: _serviceChargeEnabled,
+                        onChanged: (v) => setState(() => _serviceChargeEnabled = v),
+                        activeThumbColor: AppColors.primary,
+                      ),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _serviceChargeController,
                         keyboardType: TextInputType.number,
+                        enabled: _serviceChargeEnabled,
                         decoration: const InputDecoration(
                           labelText: 'Persentase Service Charge',
                           suffixText: '%',

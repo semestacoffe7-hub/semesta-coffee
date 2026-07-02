@@ -2,8 +2,7 @@
 /// Semesta Cafee POS Database
 class MigrationV1 {
   MigrationV1._();
-
-  static const int version = 6;
+  static const int version = 7;
 
   /// Jalankan semua DDL untuk membuat tabel
   static List<String> get createStatements => [

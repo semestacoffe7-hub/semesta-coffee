@@ -166,6 +166,15 @@ class DatabaseHelper {
     if (oldVersion < 6) {
       await db.execute("ALTER TABLE store_settings ADD COLUMN bank_account_info TEXT DEFAULT ''");
     }
+
+    if (oldVersion < 7) {
+      // Add tax and service charge columns if they don't exist
+      try { await db.execute("ALTER TABLE store_settings ADD COLUMN tax_percentage REAL NOT NULL DEFAULT 11.0"); } catch (_) {}
+      try { await db.execute("ALTER TABLE store_settings ADD COLUMN service_charge_percentage REAL NOT NULL DEFAULT 5.0"); } catch (_) {}
+      try { await db.execute("ALTER TABLE store_settings ADD COLUMN tax_enabled INTEGER NOT NULL DEFAULT 1"); } catch (_) {}
+      try { await db.execute("ALTER TABLE store_settings ADD COLUMN service_charge_enabled INTEGER NOT NULL DEFAULT 1"); } catch (_) {}
+      try { await db.execute("ALTER TABLE store_settings ADD COLUMN max_cashier_discount REAL NOT NULL DEFAULT 20.0"); } catch (_) {}
+    }
   }
 
   /// Tutup database
